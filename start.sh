@@ -3,11 +3,12 @@ set -e
 
 PORT="${PORT:-3000}"
 
-# Log direktoriyalarini yaratish
-mkdir -p /var/log/nginx /var/cache/nginx /var/run
+# Nginx binary topish
+NGINX_BIN=$(which nginx 2>/dev/null || find /nix -name nginx -type f 2>/dev/null | head -1)
+echo "Using nginx: $NGINX_BIN"
 
-# nginx.conf ni o'qib PORT ni almashtirish va vaqtinchalik faylga yozish
-sed "s/\$PORT/$PORT/g" /app/nginx.conf > /tmp/nginx.conf
+# PORT ni nginx.conf ga o'rnatish
+sed "s/\$PORT/$PORT/g" /app/nginx.conf > /tmp/nginx_app.conf
 
-# Nginx ni vaqtinchalik config bilan ishga tushirish
-nginx -c /tmp/nginx.conf -g 'daemon off;'
+echo "Starting nginx on port $PORT"
+$NGINX_BIN -c /tmp/nginx_app.conf -g 'daemon off;'
