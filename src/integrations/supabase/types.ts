@@ -14,16 +14,287 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string | null
+          task_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string | null
+          task_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string | null
+          task_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          is_suspended: boolean
+          last_login_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          is_suspended?: boolean
+          last_login_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_suspended?: boolean
+          last_login_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      task_activity: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          task_id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          task_id: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          task_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activity_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          assignee_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          deadline_at: string
+          description: string | null
+          id: string
+          overdue_notified: boolean
+          priority: Database["public"]["Enums"]["task_priority"]
+          reminder_24h_sent: boolean
+          reminder_30min_sent: boolean
+          reminder_3h_sent: boolean
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          deadline_at: string
+          description?: string | null
+          id?: string
+          overdue_notified?: boolean
+          priority?: Database["public"]["Enums"]["task_priority"]
+          reminder_24h_sent?: boolean
+          reminder_30min_sent?: boolean
+          reminder_3h_sent?: boolean
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          deadline_at?: string
+          description?: string | null
+          id?: string
+          overdue_notified?: boolean
+          priority?: Database["public"]["Enums"]["task_priority"]
+          reminder_24h_sent?: boolean
+          reminder_30min_sent?: boolean
+          reminder_3h_sent?: boolean
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          awarded_at: string
+          badge_key: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          badge_key: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          badge_key?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_active_user: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "super_admin"
+        | "admin"
+        | "manager"
+        | "employee"
+        | "viewer"
+        | "pending"
+      notification_type:
+        | "task_assigned"
+        | "deadline_24h"
+        | "deadline_3h"
+        | "deadline_30min"
+        | "task_overdue"
+        | "status_changed"
+        | "priority_changed"
+        | "task_reassigned"
+        | "task_completed"
+        | "role_assigned"
+        | "manual"
+      task_priority: "low" | "medium" | "high" | "critical"
+      task_status:
+        | "new"
+        | "in_progress"
+        | "waiting"
+        | "completed"
+        | "overdue"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +421,37 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "super_admin",
+        "admin",
+        "manager",
+        "employee",
+        "viewer",
+        "pending",
+      ],
+      notification_type: [
+        "task_assigned",
+        "deadline_24h",
+        "deadline_3h",
+        "deadline_30min",
+        "task_overdue",
+        "status_changed",
+        "priority_changed",
+        "task_reassigned",
+        "task_completed",
+        "role_assigned",
+        "manual",
+      ],
+      task_priority: ["low", "medium", "high", "critical"],
+      task_status: [
+        "new",
+        "in_progress",
+        "waiting",
+        "completed",
+        "overdue",
+        "cancelled",
+      ],
+    },
   },
 } as const
