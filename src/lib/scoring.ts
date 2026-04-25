@@ -12,9 +12,12 @@ export function scoreForTask(task: Pick<Task, "status" | "priority" | "deadline_
     if (task.completed_at && task.deadline_at && new Date(task.completed_at) <= new Date(task.deadline_at)) {
       score += 10; // on-time bonus
     }
-  } else if (task.status === "overdue" || (task.status !== "completed" && task.status !== "cancelled" && new Date(task.deadline_at) < new Date())) {
-    score -= 10;
-    if (task.priority === "critical") score -= 15;
+  } else {
+    const isLate = task.status !== "cancelled" && new Date(task.deadline_at) < new Date();
+    if (task.status === "overdue" || isLate) {
+      score -= 10;
+      if (task.priority === "critical") score -= 15;
+    }
   }
   return score;
 }
