@@ -1,6 +1,13 @@
 #!/bin/sh
-# Railway $PORT muhit o'zgaruvchisini Nginx config ga qo'llash
+set -e
+
 PORT="${PORT:-3000}"
-sed -i "s/\$PORT/$PORT/g" /app/nginx.conf
-cp /app/nginx.conf /etc/nginx/nginx.conf
-nginx -g 'daemon off;'
+
+# Log direktoriyalarini yaratish
+mkdir -p /var/log/nginx /var/cache/nginx /var/run
+
+# nginx.conf ni o'qib PORT ni almashtirish va vaqtinchalik faylga yozish
+sed "s/\$PORT/$PORT/g" /app/nginx.conf > /tmp/nginx.conf
+
+# Nginx ni vaqtinchalik config bilan ishga tushirish
+nginx -c /tmp/nginx.conf -g 'daemon off;'
